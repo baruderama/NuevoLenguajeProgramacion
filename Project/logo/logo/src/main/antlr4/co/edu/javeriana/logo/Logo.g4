@@ -18,11 +18,25 @@ sentence: function;
 
 function: move_fw | move_bk | rotl | rotr | scol;
 
-move_fw: MOVE_FORW NUM;
-move_bk: MOVE_BACK NUM;
-rotl: ROT_L NUM;
-rotr: ROT_R;
-scol: SET_COLOR NUM COMMA NUM COMMA NUM COMMA NUM;
+move_fw: MOVE_FORW NUM
+{turtle.forward(Float.parseFloat($NUM.text));};
+
+move_bk: MOVE_BACK NUM
+{turtle.backwards(Float.parseFloat($NUM.text));};
+
+rotl: ROT_L NUM
+{turtle.left(Float.parseFloat($NUM.text));};
+rotr: ROT_R NUM
+{turtle.right(Float.parseFloat($NUM.text));};
+r: NUM;
+g: NUM;
+b: NUM;
+a: NUM;
+scol: SET_COLOR r COMMA g COMMA b COMMA a
+{
+	System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
+	turtle.color(Float.parseFloat($r.text),Float.parseFloat($g.text),Float.parseFloat($b.text),Float.parseFloat($a.text));
+};
 
 VAR: 'let';
 READ: 'read';

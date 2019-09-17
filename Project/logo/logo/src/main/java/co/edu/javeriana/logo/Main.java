@@ -1,4 +1,5 @@
 
+
 package co.edu.javeriana.logo;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
@@ -33,7 +34,7 @@ public class Main {
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			LogoParser parser = new LogoParser(tokens, turtle);
 
-			LogoParser.StartContext tree = parser.start();
+			LogoParser.ProgramContext tree = parser.program();
 
 			LogoCustomVisitor visitor = new LogoCustomVisitor();
 			visitor.visit(tree);
