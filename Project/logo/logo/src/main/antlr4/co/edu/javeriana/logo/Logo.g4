@@ -14,7 +14,8 @@ public LogoParser(TokenStream input, Turtle turtle) {
 
 program: sentence*;
 
-sentence: function; 
+sentence: function | var_dec_assign | var_decl | cicle | conditional | read | print 
+			operation| dec_method |exec_method | assign ; 
 
 function: move_fw | move_bk | rotl | rotr | scol;
 
@@ -23,6 +24,61 @@ move_fw: MOVE_FORW NUM
 
 move_bk: MOVE_BACK NUM
 {turtle.backwards(Float.parseFloat($NUM.text));};
+
+/* Declarations---------------*/
+
+var_decl: VAR ID;
+
+expresion: ID | NUM | STRING | BOOL;
+
+assign: ID ASSIGN expresion;
+
+var_dec_assign: VAR assign;
+
+/* Conditionals ------------*/
+
+conditionals: GT | LT | GEQT | LEQT | EQ | DIF;//comparative expresions
+
+ht_condition: neg_expresion | ID ;
+
+condition: (ht_condition |( NUM conditionals (NUM | ID ) ) )  ( conditionals (ht_condition | NUM ) )*;
+
+compound_condition: condition (  op_logic condition )*;
+	
+code: sentence*;
+
+conditional: IF compound_condition  THEN code ((ELSE code END_IF)| END_IF);
+
+/* Cicles */
+
+cicle: WHILE compound_condition DO code END_WHILE;
+
+/* Printing and input */
+
+read: READ ID;
+
+print: PRINTLN expresion;
+
+/* Aritmetic expresions */
+inverse_ad: MINUS (ID|NUM);
+
+operator: PLUS | MINUS | MULT | DIV | inverse_ad;
+
+operation: (ID | NUM) operator (ID | NUM) (operator (ID | NUM))*;
+
+/* Logic expresions */
+
+op_logic: OR | AND;
+
+neg_expresion: NEG ID ;
+
+/* Functions */
+
+dec_method: DEF ID OPEN_PARENT (ID (COMMA ID)*)* CLOSE_PARENT DPOINT code END_DEF;
+
+/* Exec function */
+
+exec_method: ID OPEN_PARENT (expresion (COMMA expresion)* )* CLOSE_PARENT;
 
 rotl: ROT_L NUM
 {turtle.left(Float.parseFloat($NUM.text));};
@@ -34,7 +90,7 @@ b: NUM;
 a: NUM;
 scol: SET_COLOR r COMMA g COMMA b COMMA a
 {
-	System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
+	//System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
 	turtle.color(Float.parseFloat($r.text),Float.parseFloat($g.text),Float.parseFloat($b.text),Float.parseFloat($a.text));
 };
 
@@ -72,6 +128,7 @@ CLOSE_PARENT:')';
 
 
 WHILE: 'while';
+END_WHILE: 'end_while';
 DO: 'do';
 IF:'if';
 THEN:'then';
@@ -101,6 +158,8 @@ WS
 	[ \t\r\n]+ -> skip
 ;
 
-
+/*
+	
+ */
 
 
