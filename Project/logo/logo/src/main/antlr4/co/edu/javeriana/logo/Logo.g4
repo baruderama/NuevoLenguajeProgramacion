@@ -14,7 +14,7 @@ public LogoParser(TokenStream input, Turtle turtle) {
 
 program: sentence*;
 
-sentence: function | var_dec_assign | var_decl | cicle | conditional | read | print 
+sentence: function | var_decl | cicle | conditional | read | print 
 			operation| dec_method |exec_method | assign ; 
 
 function: move_fw | move_bk | rotl | rotr | scol;
@@ -27,21 +27,38 @@ move_bk: MOVE_BACK NUM
 
 /* Declarations---------------*/
 
-var_decl: VAR ID;
 
-expresion: ID | NUM | STRING | BOOL;
+expresion 
+	returns [ASTNode value]:
+ 	ID {$value = symbolTable.get($ID.text);} 
+ 	| NUM {$value = new Constant(Float.parseFloat($NUM.text));} 
+ 	| STRING {$value = new Constant($STRING.text);} 
+ 	| BOOL {$value = new Constant(Boolean.parseBoolean($BOOL.text));};
 
-assign: ID ASSIGN expresion;
+assign returns [ASTNode value]:
+ ID ASSIGN expresion 
+ {
+	$value= new VarAssign($ID.text, $expresion.value);
+};
 
-var_dec_assign: VAR assign;
+var_decl returns [ASTNode value]:
+VAR ID 
+{
+	$value= new VarDecl($ID.text);
+}
+|
+VAR ID ASSIGN expresion
+{
+	$value = new VarDeclAssign($ID.text, $expresion.value);
+};
 
 /* Conditionals ------------*/
 
 conditionals: GT | LT | GEQT | LEQT | EQ | DIF;//comparative expresions
 
-ht_condition: neg_expresion | ID ;
+ht_condition:  ID ;
 
-condition: (ht_condition |( NUM conditionals (NUM | ID ) ) )  ( conditionals (ht_condition | NUM ) )*;
+condition:	( NEG? ( ID |( NUM conditionals (NUM | ID ) ) ) ) ( conditionals (ht_condition | NUM ) )*;
 
 compound_condition: condition (  op_logic condition )*;
 	
@@ -55,9 +72,18 @@ cicle: WHILE compound_condition DO code END_WHILE;
 
 /* Printing and input */
 
-read: READ ID;
+read returns [ASTNode value]: 
+READ ID 
+{
+	$value= new Read($ID.text);
+};
 
-print: PRINTLN expresion;
+print 
+returns[ASTNode value] :
+ PRINTLN expresion
+{
+	$value = new Println($expresion.value);
+};
 
 /* Aritmetic expresions */
 inverse_ad: MINUS (ID|NUM);
@@ -91,7 +117,7 @@ a: NUM;
 scol: SET_COLOR r COMMA g COMMA b COMMA a
 {
 	//System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
-	turtle.color(Float.parseFloat($r.text),Float.parseFloat($g.text),Float.parseFloat($b.text),Float.parseFloat($a.text));
+	turtle.color(Float.parseFloat(r,g,b,a);
 };
 
 VAR: 'let';
