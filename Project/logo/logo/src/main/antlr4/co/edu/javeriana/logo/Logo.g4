@@ -1,7 +1,10 @@
 grammar Logo;
 
 @parser::header {
-	
+	import co.edu.javeriana.ast.*;
+	import java.util.Map;
+	import java.util.HashMap;
+	import co.edu.javeriana.logo.*;
 }
 @parser::members {
 
@@ -13,271 +16,543 @@ public LogoParser(TokenStream input, Turtle turtle) {
 }
 
 }
-/*
-program: {
+
+program: 
+	{
 		List<ASTNode> code = new ArrayList<ASTNode>();
-		lets = new Lets();
-		funciones= new Funciones();
+		Niveles niveles = new Niveles(turtle);
 	}
 	(
-		sentence {
-			code.add($sentence.value);
+		s1=sentence 
+		{
+			//System.out.println("add " +$s1.value);
+			code.add($s1.value);
 		}
 	)*
 	{
-		for(ASTNode aux:code) {
-			aux.execute(lets, funciones);
-		}	
-	};
-/* 
-sentence returns [ASTNode value]:
-	 function 
-	 | 
-	 var_decl {
+		for(ASTNode aux:code)
+		aux.execute(niveles.getPrecedenciaSimbolos(),niveles);
+	}
+	;
+
+sentence 
+returns [ASTNode value]
+:
+//	 function 
+//	 | 
+	 var_decl 
+	 {
 	 	$value =$var_decl.value;
 	 }
 	 | 
-	 cicle {
+	 cicle 
+	 {
 	 	$value= $cicle.value;
 	 }
 	 | 
-	 conditional {
-	 	$value = conditional.value;
+	 conditional 
+	 {
+	 	$value = $conditional.value;
 	 }
 	 | 
-	 read {
+	 read 
+	 {
 	 	$value = $read.value;
 	 }
 	 | 
-	 print {
+	 print 
+	 {
 	 	$value = $print.value;
 	 }
-	 |
-	 operation {
-	 	$value = operation.value;
-	 }
-	 | 
-	 dec_method {
+//	 | 
+	 dec_method 
+	 {
 	 	$value = $dec_method.value;
 	 }
-	 |
-	 exec_method {
-	 	$value = $exec_method.value;
-	 }
+//	 |
+//	 exec_method 
+//	 {
+//	 	$value = $exec_method.value;
+//	 }
 	 | 
-	 assign {
+	 assign 
+	 {
 	 	$value = $assign.value;
 	 }
 	 ; 
 
+
+
+
+
+
+
 function returns [ASTNode value]:
- 	 move_fw {
- 	 	$value =$move_fw.value;
- 	 } 
+ 	 move_fw 
+// 	 {
+// 	 	$value =$move_fw.value;
+// 	 } 
  	 | 
- 	 move_bk {
- 	 	$value = $move_bk.value;
- 	 }
+ 	 move_bk 
+// 	 {
+// 	 	$value = $move_bk.value;
+// 	 }
  	 | 
- 	 rotl {
- 	 	$value = $rotl.value; 
- 	 }
+ 	 rotl 
+// 	 {
+// 	 	$value = $rotl.value; 
+// 	 }
  	 | 
- 	 rotr {
- 	 	$value = $rotr.value;
- 	 }
+ 	 rotr 
+// 	 {
+// 	 	$value = $rotr.value;
+// 	 }
  	 | 
- 	 scol{
- 	 	$value = $scol.value;
- 	 };
-/*
-move_fw returns [ASTNode value]:
- MOVE_FORW (
-	NUM {
-		$value = new MoveFw($NUM.text, turtle);
-	}
-	|
-	ID {
-		
-		$value= new MoveFw($ID.text,turtle);
-	}
+ 	 scol
+// 	 {
+// 	 	$value = $scol.value;
+// 	 }
+ 	 ;
+ 	 
+ 	 
+ 	 
+ 	 
+ 	 
+ 	 
+//--------------------------TORTUGA---------
+rotl: ROT_L sumaResta
+//{turtle.left(Float.parseFloat($NUM.text));}
+;
+rotr: ROT_R sumaResta
+//{turtle.right(Float.parseFloat($NUM.text));}
+;
+
+
+move_fw 
+//returns [ASTNode value]
+:
+ MOVE_FORW 
+ (
+	e1=sumaResta
+//	{
+//		$value = new MoveFw($NUM.text, turtle);
+//	}
+
+//	{
+//		
+//		$value= new MoveFw($ID.text,turtle);
+//	}
 );
-/* 
-{
-	turtle.forward(Float.parseFloat($NUM.text));
-};
+ 
+//{
+//	turtle.forward(Float.parseFloat($NUM.text));
+//}
+//;
 
 
-move_bk returns [ASTNode value]:
-MOVE_BACK (
-	NUM {
-		$value= new MoveBc($NUM.text, turtle);
-	
-	}
-	|
-	ID {
-		$value= new MoveBc($ID.text, turtle);
-		
-	}
-	);
+move_bk 
+//returns [ASTNode value]
+:
+MOVE_BACK 
+(
+	e1=sumaResta
+//	{
+//		$value= new MoveBc($NUM.text, turtle);
+//	
+//	}
+//	{
+//		$value= new MoveBc($ID.text, turtle);	
+//	}
+)
+;
 
-/* Declarations---------------*/
+
+r: sumaResta;
+g: sumaResta;
+b: sumaResta;
+a: sumaResta;
+scol: SET_COLOR r COMMA g COMMA b COMMA a
+//{
+//	//System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
+//	turtle.color(Float.parseFloat(r,g,b,a);
+//}
+;
+//---------------------------------------------
+
+//---------------------------EXPRESION--------
 
 expresion 
-	returns [ASTNode value]:
- 	ID {$value = new Formal($ID.text);} 
- 	| NUM {$value = new Real(Float.parseFloat($NUM.text));} 
- 	| STRING {$value = new Real($STRING.text);} 
- 	| BOOL {$value = new Real(Boolean.parseBoolean($BOOL.text));};
-/*
-assign returns [ASTNode value]:
- ID ASSIGN expresion 
- {
-	$value= new Asignar($ID.text, $expresion.value);
-};
+	returns [ASTNode value]
+	:
+ 	ID 
+ 	{$value = new Formal($ID.text);
+ 		//System.out.println(" haha3 "+ $value );
+ 	} 
+ 	| 
+ 	NUM 
+ 	{
+ 		//System.out.println(" haha4 "+ $NUM.text );
+ 		$value = new Real(Float.parseFloat($NUM.text));
+ 		//System.out.println(" despues "+ $value );
+ 		
+ 	} 
+ 	| 
+ 	STRING 
+ 	{$value = new Real($STRING.text);
+ 		//System.out.println(" haha5 "+ $value );
+ 	} 
+ 	| 
+ 	BOOL 
+ 	{$value = new Real(Boolean.parseBoolean($BOOL.text));
+ 		//System.out.println(" haha6 "+ $value );
+ 	}
+ 	|
+ 	OPEN_PARENT condition {$value = $condition.value;}CLOSE_PARENT
+ 	;
+ //------------------------------------------
+ 
+ 
+ 
+ 
+ 	
+//--------------------VARIABLES------------
+assign 
+returns [ASTNode value]
+	:
+ 	ID ASSIGN sumaResta 
+ 	{
+	$value= new Asignar($ID.text, $sumaResta.value);
+	}
+	;
 
-var_decl returns [ASTNode value]:
-VAR ID 
+var_decl 
+returns [ASTNode value]
+:
+VAR(
+	(ID 
 {
-	$value= new DeclararLet($ID.text);
+	$value= new DeclararLet($ID.text,new Real(0));
+	
 }
-|
-VAR ID ASSIGN expresion
+	)
+	| (ID ASSIGN sumaResta
 {
-	$value = new DecAsignarLet($ID.text, $expresion.value);
-};
+	$value = new DecAsignarLet($ID.text,$sumaResta.value);
+}
+	)
+)
+;
+
+//-------------------------------------------------
+
+
+
+
+
 
 /* Conditionals ------------*/
 
 
-conditionalsAritmetic returns [ASTNode value]:
-				e1=multDivi {$value=$e1.value;}
-	(
-		(GT 	e2=multDivi{$value= new Mayor($value,$e2.value);}) 
-	|	(LT 	e2=multDivi{$value= new Menor($value,$e2.value);}) 	
- 	| 	(GEQT 	e2=multDivi{$value= new MayorIgual($value,$e2.value);})
- 	| 	(LEQT 	e2=multDivi{$value= new MenorIgual($value,$e2.value);})
- 	| 	(EQ 	e2=multDivi{$value= new Igual($value,$e2.value);})
- 	| 	(DIF 	e2=multDivi{$value= new Diferente($value,$e2.value);})
- 	|	(PLUS 	e2=multDivi{$value= new Sumando($value, $e2.value);})*
- 	|   (MINUS  e2=multDivi {$value= new Diferencia($e2.value);})*
- 	)
- 	|
- 		MINUS  e1=multDivi {$value= new Diferencia($e1.value);}
- 	;
+
  		//comparative expresions
  		
-multDivi returns [ASTNode value]:
- 	e1= expresion{$value=$e1.value}
- 	((MULT e2=expresion{$value= new Multi($value,$e2.value);})*
- 	|(DIV e2= expresion{$value= new Divi($value,$e2.value);})*);
 
-ht_condition:  ID ;
-/*
 
-neg_expresion returns [ASTNOde value]:
-	e1= conditionalsAritmetic {$value =$e1.value;}
-	|NEG e1=conditionalsAritmetic{$value= new Neg ($e1.value);}
-	;
-condition returns [ASTNode value]:
 
-	neg_expresion {$value=$neg_expresion.value;}
-	(
-		(AND e2=neg_expresion{$value= new And($value,$e2.value);})
-		|(OR e2=neg_expresion{$value= new Or ($value,$e2.value);})
-	)*;
+
 	
-bloque returns [ASTNode value]:
-
-	{
-		List<ASTNode> lista = new ArrayList<ASTNode>();
-		lista.add(new SubirNivel());
-	}
-	(s1=sentence{lista.add($s1.value);})*
-	{
-		lista.add(new BajarNivel() );
-		$value = new Cuerpo(lista);
-	}
-		;
 	
-conditional returns [ASTNode value]://TODO
-	IF condition THEN
-	(
-	code= bloque
-	{$value = new If($condition.value, $code.value);}
+	
+	
+	
+	
+//------CONDICIONNNN-----------------------------
+condition 
+returns [ASTNode value]
+:
+
+	(e1=sumaResta
+	{$value=$e1.value;}
+	( 
+		  (AND e2=sumaResta
+			{$value= new And($value,$e2.value);}
+		)
+		| (OR e2=sumaResta
+			{$value= new Or ($value,$e2.value);}
+		)
+		| (EQ e2=sumaResta
+			{$value= new Eq ($value,$e2.value);}
+		)
+		| (DIF e2=sumaResta
+			{$value= new Diferente ($value,$e2.value);}
+		)
+		| (GT e2=sumaResta
+			{$value= new Mayor ($value,$e2.value);}
+		)
+		| (GEQT e2=sumaResta
+			{$value= new MayorIgual ($value,$e2.value);}
+		)
+		| (LT e2=sumaResta
+			{$value= new Menor ($value,$e2.value);}
+		)
+		| (LEQT e2=sumaResta
+			{$value= new MenorIgual ($value,$e2.value);}
+		)
+	)*)
 	|
-	code=bloque
-	ELSE elseC=bloque
-	{$value= new If($condition.value, $code.value, $elseC.value);}	
-	)
-	END_IF	
+	NEG e2=sumaResta
+	{$value= new Neg ($e2.value);}
 	;
-
-
-/* 
-condition:	( NEG? ( ID |( NUM conditionals (NUM | ID ) ) ) ) ( conditionals (ht_condition | NUM ) )*;
-
-compound_condition: condition (  op_logic condition )*;
+//---------------------------------------------------------------	
 	
-code: sentence*;
+	
+	
+	
+	
+	
+//----------------------SUMA-RESTA------------------------
+sumaResta 
+returns [ASTNode value]
+:
+e1= multDivi 
+{
+	$value= $e1.value;
+	//System.out.println(" sum "+ $e1.value );
+	
+}
+(
+	(PLUS e2=multDivi	
+		{
+			$value= new Sumando($value, $e2.value);
+		}
+	)
+	|
+	(MINUS e2=multDivi
+		{
+			$value= new Diferencia($value, $e2.value);
+		}
+	)
+	
+)*
+;
+//--------------------------------------------------------
+	
 
-conditional: IF compound_condition  THEN code ((ELSE code END_IF)| END_IF);
 
-*/
-/* Cicles */
-/*
-cicle: WHILE condition DO bloque END_WHILE;
 
-/* Printing and input */
-/*
-read returns [ASTNode value]: 
-READ ID 
+
+//---------------------MULT-DIVI--------------------------
+multDivi 
+returns [ASTNode value]
+:
+	
+ 	e1= addInverse 
+ 	{$value=$e1.value;
+ 		//System.out.println(" mult "+ $e1.value );
+ 	}
+ 	
+ 	(
+	 	
+	 	(MULT e2=addInverse
+	 		{
+	 			$value= new Multi($value,$e2.value);
+	 		}
+	 	)
+		| (DIV e2= addInverse
+	 		{
+	 			$value= new Divi($value,$e2.value);
+	 		}
+	 	)
+ 	)*
+ 	;
+//--------------------------------------------------------
+	
+
+
+
+
+//--------------------ADD-INVERSE------------------------
+
+addInverse
+returns [ASTNode value]
+:
+(MINUS e1=expresion
+	{
+		$value= new InversoAditivo($e1.value);
+	}
+)
+| 
+(e1=expresion)
+	{
+		//System.out.println(" addIn "+ $e1.value );
+		$value= $e1.value;
+	}
+
+;
+
+//------------------------------------------------------
+	
+	
+	
+	
+	
+
+		
+		
+
+
+
+
+//-----------------------IF-ELSE----------------------------	
+//conditioOneIf 
+//returns [ASTNode value]
+//:
+//THEN
+//{
+//	List<ASTNode> lista = new ArrayList<ASTNode>();
+//	
+//}
+//END_IF
+//;
+conditional 
+returns [ASTNode value]
+://TODO
+	IF condition 
+//	{
+//		List<ASTNode> body= new ArrayLis<>();
+//		List<ASTNode> elsebody= new ArrayLis<>();
+//	}
+	THEN
+	(
+		(code = parteInterna)
+			//{body.add($e1.value);}
+			{$value= new If($condition.value, $code.value);}
+		
+	)
+//	(code=conditioOneIf
+//	{
+//		
+//	}
+//	//(code = parteInterna)
+	(
+		ELSE
+//		(e2 =parteInterna
+//			//{elsebody.add($e2.value)}
+//		)*
+		(elseC= parteInterna)
+		{$value= new If($condition.value, $code.value, $elseC.value);}
+	)?
+	END_IF
+//	{
+//		$value= new If($condition.value, body, elsebody);
+//	}	
+	;
+	
+	
+//--------------------------------------------------------
+
+
+
+
+
+
+
+
+//-------------------WHILE-DO--------------------------
+cicle 
+returns [ASTNode value]
+ : 
+WHILE condition DO
+parteInterna
+
+END_WHILE
+{
+	$value= new While($condition.value, $parteInterna.value);
+}
+;
+//------------------------------------------------
+
+
+
+
+
+
+
+//-----------------------LEER-IMPRIMIR-------------
+read 
+returns [ASTNode value]
+: 
+READ ID
 {
 	$value= new Read($ID.text);
-};
+}
+;
 
 print 
-returns[ASTNode value] :
- PRINTLN expresion
-{
-	$value = new Println($expresion.value);
-};
+returns[ASTNode value] 
+:
+ PRINTLN  ( e1=sumaResta 
+	{
+		
+		//System.out.println(" print "+ $e1.value );
+		$value=new Println($e1.value);
+	}
+ )+
+;
+//-------------------------------------------------
 
-/* Aritmetic expresions */
-inverse_ad: MINUS (ID|NUM);
 
-operator: PLUS | MINUS | MULT | DIV | inverse_ad;
 
-operation: (ID | NUM) operator (ID | NUM) (operator (ID | NUM))*;
+
+
+
+
+
+
+
 
 /* Logic expresions 
 
 op_logic: OR | AND;
 
 //neg_expresion: NEG ID ;
-
-/* Functions
-
-dec_method: DEF ID OPEN_PARENT (ID (COMMA ID)*)* CLOSE_PARENT DPOINT bloque END_DEF;
-
-/* Exec function 
-
-exec_method: ID OPEN_PARENT (expresion (COMMA expresion)* )* CLOSE_PARENT;
-
-rotl: ROT_L NUM
-{turtle.left(Float.parseFloat($NUM.text));};
-rotr: ROT_R NUM
-{turtle.right(Float.parseFloat($NUM.text));};
-r: NUM;
-g: NUM;
-b: NUM;
-a: NUM;
-scol: SET_COLOR r COMMA g COMMA b COMMA a
-{
-	//System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
-	turtle.color(Float.parseFloat(r,g,b,a);
-};
+* 
 */
+
+//--------------------------------FUNCIONES-DECLARACIÓN----------
+
+dec_method
+:
+ DEF ID OPEN_PARENT (ID (COMMA ID)*)* CLOSE_PARENT 
+ DPOINT
+  //parteInterna 
+  END_DEF
+  ;
+
+//----------------------------FUNCIONES-LLAMADO----------------
+exec_method
+:
+ ID OPEN_PARENT (p1=sumaResta (COMMA p2=sumaResta)* )* CLOSE_PARENT;
+
+//---------------------------------------------------
+//----------------------------PARTE-INTERNA---------------
+parteInterna 
+returns [ParteInterna value]
+:
+{
+	$value=new ParteInterna();
+}
+
+(
+	
+	p1=sentence{$value.agregar($p1.value);
+		//System.out.println(" gg "+ $p1.value);
+	}
+)*
+;
+//--------------------------------------------------------
+
+
 VAR: 'let';
 READ: 'read';
 PRINTLN: 'println';

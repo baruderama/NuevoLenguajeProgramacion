@@ -1,4 +1,7 @@
-package co.edu.javeriana.metodos;
+package co.edu.javeriana.ast;
+
+import java.util.Map;
+import java.util.Stack;
 
 public class Real implements ASTNode{
 	
@@ -9,11 +12,8 @@ public class Real implements ASTNode{
 		this.valor = valor;
 		
 	}
-
 	@Override
-	public Object execute(Lets nivelLets, Funciones nivelFuncion) {
-		// TODO Auto-generated method stub
+	public Object execute(Stack<Map<String, Object>> ordenSimbolos, Niveles pilaDatos) {
 		return this.valor;
 	}
-
 }

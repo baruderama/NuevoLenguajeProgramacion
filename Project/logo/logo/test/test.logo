@@ -1,8 +1,14 @@
-set_color 255,13,13,255
-move_forw 100
-rot_r 45
-move_forw 100
-rot_l 180
-move_back 60
+
+let n=5
+if ((n==5) && (n>0)) || (n<10)
+then
+while n < 10
+do
+println n
+n= n+1
+end_while
+else
+end_if
+
 
 

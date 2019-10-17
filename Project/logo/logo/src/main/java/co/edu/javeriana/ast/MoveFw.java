@@ -1,4 +1,7 @@
-package co.edu.javeriana.metodos;
+package co.edu.javeriana.ast;
+
+import java.util.Map;
+import java.util.Stack;
 
 import co.edu.javeriana.logo.Turtle;
 
@@ -24,7 +27,14 @@ public class MoveFw implements ASTNode {
 		
 	}
 	@Override
-	public Object execute(Lets nivelLets, Funciones nivelFuncion) {
+	public Object execute(Stack<Map<String, Object>> ordenSimbolos, Niveles pilaDatos) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/*
+	@Override
+	public Object execute(Lets nivelLets, Niveles nivelFuncion) {
 		
 		if(isFloat(this.number))
 		{
@@ -36,6 +46,6 @@ public class MoveFw implements ASTNode {
 		}
 		return null;
 	}
-	
+	*/
 	
 }
