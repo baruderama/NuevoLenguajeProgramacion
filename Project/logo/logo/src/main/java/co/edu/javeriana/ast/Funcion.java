@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+
 public class Funcion implements ASTNode {
 	private String nombre;
 	private List<String> parametros;
@@ -22,6 +23,7 @@ public class Funcion implements ASTNode {
 		this.partInterna=partInterna;
 		this.parametros=new ArrayList<>();
 	}
+	
 	
 	public Object execFuncion(Niveles pilaDatos, Stack<Map<String, Object> > precedenciaSimbolos, List<ASTNode> parametros) {
 		

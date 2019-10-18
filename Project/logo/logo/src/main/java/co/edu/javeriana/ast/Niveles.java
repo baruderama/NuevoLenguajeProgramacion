@@ -18,7 +18,7 @@ public class Niveles {
 		this.nivelFuncion = new HashMap<String, Funcion>();
 		this.precedenciaSimbolos= new Stack<Map<String, Object> > ();
 		this.precedenciaSimbolos.add(new HashMap<String, Object>());
-		//this.turtle =turtle;
+		this.turtle =turtle;
 		//subirNivel();
 	}
 	public Object execFuncion(String nombre,List<ASTNode> parametros){

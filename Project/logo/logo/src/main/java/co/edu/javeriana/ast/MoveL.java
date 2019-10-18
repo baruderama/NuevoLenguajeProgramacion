@@ -3,14 +3,10 @@ package co.edu.javeriana.ast;
 import java.util.Map;
 import java.util.Stack;
 
-import co.edu.javeriana.logo.Turtle;
-
-public class MoveBc implements ASTNode{
-
-	
+public class MoveL implements ASTNode {
 private ASTNode expresion;
 	
-	public MoveBc(ASTNode expresion)
+	public MoveL(ASTNode expresion)
 	{
 		super();
 		this.expresion = expresion;
@@ -21,7 +17,7 @@ private ASTNode expresion;
 		// TODO Auto-generated method stub
 		try {
 			System.out.println((float)(this.expresion.execute(ordenSimbolos, pilaDatos)));
-			pilaDatos.getTurtle().backwards((float)(this.expresion.execute(ordenSimbolos, pilaDatos)));
+			pilaDatos.getTurtle().left((float)(this.expresion.execute(ordenSimbolos, pilaDatos)));
 			
 		} catch (Exception e) {
 			System.out.println("Error en forward" + e);
@@ -30,19 +26,5 @@ private ASTNode expresion;
 		}
 		return null;
 	}
-//	@Override
-//	public Object execute(Lets nivelLets, Niveles nivelFuncion) {
-//		
-//		if(isFloat(this.number))
-//		{
-//			this.turtle.backwards(Float.parseFloat(number));
-//		}
-//		else
-//		{
-//			this.turtle.backwards((float) nivelLets.getLet(this.number));
-//		}
-//		return null;
-//	}
-	
 
 }

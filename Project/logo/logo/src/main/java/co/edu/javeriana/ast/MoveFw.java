@@ -6,29 +6,27 @@ import java.util.Stack;
 import co.edu.javeriana.logo.Turtle;
 
 public class MoveFw implements ASTNode {
-	private String number;
-	private Turtle turtle;
 	
-	public MoveFw(String number, Turtle turtle)
+	private ASTNode expresion;
+	
+	public MoveFw(ASTNode expresion)
 	{
 		super();
-		this.number=number;
-		this.turtle=turtle;
+		this.expresion = expresion;
 	}
-	public boolean isFloat(String number) {
-		
-		try {
-			Float.parseFloat(number);
-			return true;
-		}
-		catch (NumberFormatException e) {
-			return false;
-		}
-		
-	}
+	
 	@Override
 	public Object execute(Stack<Map<String, Object>> ordenSimbolos, Niveles pilaDatos) {
 		// TODO Auto-generated method stub
+		try {
+			System.out.println((float)(this.expresion.execute(ordenSimbolos, pilaDatos)));
+			pilaDatos.getTurtle().forward((float)(this.expresion.execute(ordenSimbolos, pilaDatos)));
+			
+		} catch (Exception e) {
+			System.out.println("Error en forward" + e);
+			
+			// TODO: handle exception
+		}
 		return null;
 	}
 	

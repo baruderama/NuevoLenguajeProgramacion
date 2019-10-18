@@ -40,6 +40,7 @@ returns [ASTNode value]
 :
 //	 function 
 //	 | 
+	
 	 var_decl 
 	 {
 	 	$value =$var_decl.value;
@@ -64,20 +65,45 @@ returns [ASTNode value]
 	 {
 	 	$value = $print.value;
 	 }
-//	 | 
+	 | 
 	 dec_method 
 	 {
 	 	$value = $dec_method.value;
 	 }
-//	 |
-//	 exec_method 
-//	 {
-//	 	$value = $exec_method.value;
-//	 }
+	 |
+	 exec_method 
+	 {
+	 	$value = $exec_method.value;
+	 }
 	 | 
 	 assign 
 	 {
 	 	$value = $assign.value;
+	 }
+	 |
+	 move_fw
+	 {
+	 	$value = $move_fw.value;
+	 }
+	 |
+	 move_bk
+	 {
+	 	$value = $move_bk.value;
+	 }
+	 |
+	 rotl 
+	 {
+	 	$value = $rotl.value;
+	 }
+	 |
+	 rotr 
+	 {
+	 	$value =$rotr.value;
+	 }
+	 |
+	 scol
+	 {
+	 	$value = $scol.value;
 	 }
 	 ; 
 
@@ -85,34 +111,32 @@ returns [ASTNode value]
 
 
 
-
-
-function returns [ASTNode value]:
- 	 move_fw 
+//function returns [ASTNode value]:
+// 	 move_fw 
 // 	 {
 // 	 	$value =$move_fw.value;
 // 	 } 
- 	 | 
- 	 move_bk 
+// 	 | 
+// 	 move_bk 
 // 	 {
 // 	 	$value = $move_bk.value;
 // 	 }
- 	 | 
- 	 rotl 
+// 	 | 
+// 	 rotl 
 // 	 {
 // 	 	$value = $rotl.value; 
 // 	 }
- 	 | 
- 	 rotr 
+// 	 | 
+// 	 rotr 
 // 	 {
 // 	 	$value = $rotr.value;
 // 	 }
- 	 | 
- 	 scol
+// 	 | 
+// 	 scol
 // 	 {
 // 	 	$value = $scol.value;
 // 	 }
- 	 ;
+// 	 ;
  	 
  	 
  	 
@@ -120,62 +144,89 @@ function returns [ASTNode value]:
  	 
  	 
 //--------------------------TORTUGA---------
-rotl: ROT_L sumaResta
-//{turtle.left(Float.parseFloat($NUM.text));}
-;
-rotr: ROT_R sumaResta
-//{turtle.right(Float.parseFloat($NUM.text));}
-;
+rotl
+returns [ASTNode value]
+: ROT_L 
+(
+	e1=sumaResta
+	{
+		$value = new MoveL($sumaResta.value);
+	}
+	);
+
+rotr
+returns [ASTNode value]
+: ROT_R 
+(
+	e1=sumaResta
+	{
+		$value = new MoveR($sumaResta.value);
+	}
+	);
 
 
 move_fw 
-//returns [ASTNode value]
+returns [ASTNode value]
 :
  MOVE_FORW 
  (
 	e1=sumaResta
-//	{
-//		$value = new MoveFw($NUM.text, turtle);
-//	}
-
-//	{
-//		
-//		$value= new MoveFw($ID.text,turtle);
-//	}
-);
- 
-//{
-//	turtle.forward(Float.parseFloat($NUM.text));
-//}
-//;
+	{
+		$value = new MoveFw($sumaResta.value);
+	}
+	);
+	
 
 
 move_bk 
-//returns [ASTNode value]
+returns [ASTNode value]
 :
 MOVE_BACK 
 (
 	e1=sumaResta
-//	{
-//		$value= new MoveBc($NUM.text, turtle);
-//	
-//	}
-//	{
-//		$value= new MoveBc($ID.text, turtle);	
-//	}
-)
-;
+	{
+		$value = new MoveBc($sumaResta.value);
+	}
+	);
 
 
-r: sumaResta;
-g: sumaResta;
-b: sumaResta;
-a: sumaResta;
-scol: SET_COLOR r COMMA g COMMA b COMMA a
+
+//
+//r
+//[ASTNode value]
+//: 
+//e1=sumaResta
 //{
-//	//System.out.println($r.text+"|"+$g.text+"|"+$b.text+"|"+$a.text+"|");
-//	turtle.color(Float.parseFloat(r,g,b,a);
-//}
+//	$value=$e1.value;
+//};
+//g
+//[ASTNode value]
+//: 
+//e1=sumaResta
+//{
+//	$value=$e1.value;
+//};
+//b
+//[ASTNode value]
+//: 
+//e1=sumaResta
+//{
+//	$value=$e1.value;
+//};
+//a
+//[ASTNode value]
+//: e1=sumaResta
+//{
+//	$value=$e1.value;
+//};
+
+scol
+ returns [ASTNode value]
+: 
+SET_COLOR e1=sumaResta COMMA e2=sumaResta COMMA e3=sumaResta COMMA e4=sumaResta
+{
+	$value = new SetColor($e1.value,$e2.value,$e3.value,$e4.value );
+}
 ;
 //---------------------------------------------
 
@@ -521,19 +572,48 @@ op_logic: OR | AND;
 
 //--------------------------------FUNCIONES-DECLARACIÓN----------
 
-dec_method
+dec_method returns [ASTNode value]
 :
- DEF ID OPEN_PARENT (ID (COMMA ID)*)* CLOSE_PARENT 
+ DEF ID OPEN_PARENT meterFuncion CLOSE_PARENT 
  DPOINT
-  //parteInterna 
+  parteInterna
   END_DEF
+  {
+  	$value =new Funcion($ID.text,$meterFuncion.parameters,$parteInterna.value);
+  }
+  |
+  DEF ID OPEN_PARENT CLOSE_PARENT 
+ DPOINT
+  parteInterna
+  END_DEF
+  {
+  	$value =new Funcion($ID.text,$parteInterna.value);
+  }
   ;
 
 //----------------------------FUNCIONES-LLAMADO----------------
-exec_method
+meterFuncion returns [List<String> parameters]
 :
- ID OPEN_PARENT (p1=sumaResta (COMMA p2=sumaResta)* )* CLOSE_PARENT;
+{
+	$parameters=new ArrayList<String>();
+}
+	n1=meter{$parameters.add($n1.var_name);}
+	(COMMA n2=meter{$parameters.add($n2.var_name);})*;
 
+meter returns [String var_name]: ID{$var_name=$ID.text;};
+
+exec_method returns [ASTNode value]
+:
+{
+	List<ASTNode> expresiones = new ArrayList<ASTNode>();
+}
+ ID OPEN_PARENT (p1=sumaResta {expresiones.add($p1.value);}
+ 	(COMMA p2=sumaResta {expresiones.add($p2.value);})*
+ )* CLOSE_PARENT
+ {
+ 	$value = new FuncionLlamado($ID.text,expresiones);
+ }
+;
 //---------------------------------------------------
 //----------------------------PARTE-INTERNA---------------
 parteInterna 
